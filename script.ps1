@@ -74,19 +74,19 @@ If ($True) {
 
     Write-Output "- Configure Jabra Direct"
     $json = "$([Environment]::GetFolderPath("ApplicationData"))\Jabra Direct\config.json"
-    if (Test-path("$json")) {
+    If (Test-path("$json")) {
         Write-Output "-- Found the Config File, applying changes"
         $a = Get-Content "$json" -Raw | ConvertFrom-Json
 
         $a.DirectShowNotification.value = $false
-        $a.DirectShowNotification.locked = $true
+        $a.DirectShowNotification.locked = $false # Application overrides this value to False
 
-        $a.EnableFeedback.value = $false
-        $a.EnableFeedback.locked = $true
+        #$a.EnableFeedback.value = $false # Application overrides this value to True
+        #$a.EnableFeedback.locked = $true # Application overrides this value to False
 
         $a | ConvertTo-Json -Depth 3 | Format-Json | Set-Content "$json" -Encoding UTF8
         ((Get-Content "$json") -join "`n") + "`n" | Set-Content -NoNewline "$json"
-    } else {
+    } Else {
         Write-Output "-- Didn't find the Config File"
         #If (Test-path("C:\Program Files (x86)\Jabra\Direct4\jabra-direct.exe")) {
            #Write-Output "--- But Jabra Direct is installed, creating a Config File"
@@ -98,13 +98,13 @@ If ($True) {
                 DirectShowNotification = @{
                     key = "DirectShowNotification"
                     value = $false
-                    locked = $true
+                    locked = $false
                 }
-                EnableFeedback = @{
-                    key = "EnableFeedback"
-                    value = $false
-                    locked = $true
-                }   
+                #EnableFeedback = @{
+                #    key = "EnableFeedback"
+                #    value = $false
+                #    locked = $true
+                #}   
             }
             $ConfigurationRequest | ConvertTo-Json -depth 100 | Set-Content "$json"
             $a = Get-Content "$json" -Encoding UTF8 | ConvertFrom-Json
